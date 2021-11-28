@@ -11,10 +11,40 @@ type block struct {
 	prevHash string
 }
 
+type blockchain struct {
+	blocks []block
+}
+
+func (b *blockchain) getLastHash() string {
+	if len(b.blocks) > 0 {
+		return b.blocks[len(b.blocks)-1].hash
+	}
+
+	return ""
+}
+
+func (b *blockchain) addBlock(data string) {
+	newBlock := block{data, "", b.getLastHash()} // 1 job
+
+	hash := sha256.Sum256([]byte(newBlock.data + newBlock.prevHash)) // 2 job
+	newBlock.hash = fmt.Sprintf("%x", hash)
+
+	b.blocks = append(b.blocks, newBlock) // 3 job
+}
+
+func (b *blockchain) listBlocks() {
+	for _, block := range b.blocks {
+		fmt.Printf("Data:  %s\n", block.data)
+		fmt.Printf("Hash:  %s\n", block.hash)
+		fmt.Printf("Prev Hash:  %s\n\n", block.prevHash)
+	}
+}
+
 func main() {
-	genesisBlock := block{"Genesis Block", "", ""}
-	hash := sha256.Sum256([]byte(genesisBlock.data + genesisBlock.prevHash)) //SHA256
-	hexHash := fmt.Sprintf("%x", hash)
-	genesisBlock.hash = hexHash
-	fmt.Print(genesisBlock)
+	chain := blockchain{}
+	chain.addBlock("Genesis Block")
+	chain.addBlock("Second Block")
+	chain.addBlock("Third Block")
+	chain.listBlocks()
+
 }
