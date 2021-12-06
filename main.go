@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/seonjin85/seonjin85coin/blockchain"
+	"github.com/seonjin85/seonjin85coin/utils"
 )
 
 const port string = ":4000"
@@ -27,6 +30,23 @@ func (u URLDescription) String() string {
 	return "Hello i`m  the url descrition"
 }
 
+type AddBlockBody struct {
+	Message string
+}
+
+func blocks(rw http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		rw.Header().Add("Content-Type", "application/json")
+		json.NewEncoder(rw).Encode(blockchain.GetBlockchain().AllBlocks())
+	case "POST":
+		var addBlockBody AddBlockBody
+		utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
+		blockchain.GetBlockchain().AddBlock(addBlockBody.Message)
+		rw.WriteHeader(http.StatusCreated)
+	}
+}
+
 func documemtation(rw http.ResponseWriter, r *http.Request) {
 	data := []URLDescription{
 		{
@@ -40,6 +60,11 @@ func documemtation(rw http.ResponseWriter, r *http.Request) {
 			Description: "Add A Block",
 			Payload:     "data:string",
 		},
+		{
+			URL:         URL("/blocks/{id}"),
+			Method:      "GET",
+			Description: "See A Block",
+		},
 	}
 	rw.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(rw).Encode(data)
@@ -47,6 +72,7 @@ func documemtation(rw http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", documemtation)
+	http.HandleFunc("/blocks", blocks)
 	fmt.Printf("Listening on http:localhost%s\n", port)
 	log.Fatal(http.ListenAndServe(port, nil))
 }
