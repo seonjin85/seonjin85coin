@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	go rest.Start(3000)
-	explorer.Start(4000)
+	go explorer.Start(4000)
+	rest.Start(3000)
 }
