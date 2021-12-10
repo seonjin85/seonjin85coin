@@ -2,6 +2,7 @@ package rest
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -34,6 +35,10 @@ func (u urlDescription) String() string {
 
 type addBlockBody struct {
 	Message string
+}
+
+type errorResponse struct {
+	ErrorMessage string `json:"errorMessage`
 }
 
 func blocks(rw http.ResponseWriter, r *http.Request) {
@@ -76,11 +81,17 @@ func documemtation(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(rw).Encode(data)
 }
+
+var ErrNotFound = errors.New("block no found")
+
 func block(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["height"])
-	utils.HandleErr(err)	
-	block := blockchain.GetBlockchain().GetBlock(id)
+	utils.HandleErr(err)
+	block, err := blockchain.GetBlockchain().GetBlock(id)
+	if err == blockchain.ErrNotFound {
+		json.NewEncoder(rw).Encode(errorResponse{fmt.Sprint(err)})
+	}
 	json.NewEncoder(rw).Encode(block)
 }
 
