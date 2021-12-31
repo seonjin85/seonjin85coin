@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"flag"
@@ -16,9 +16,7 @@ func usage() {
 	fmt.Printf("-mode=rest :    Choose between 'html' and 'rest'\n")
 	os.Exit(0)
 }
-
-func main() {
-
+func Start() {
 	if len(os.Args) == 1 {
 		usage()
 	}
@@ -36,5 +34,4 @@ func main() {
 	default:
 		usage()
 	}
-	fmt.Println(*port, *mode)
 }
