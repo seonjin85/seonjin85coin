@@ -16,8 +16,8 @@ var db *bolt.DB
 func DB() *bolt.DB {
 	if db == nil {
 		dbPointer, err := bolt.Open(dbName, 0600, nil)
-		db = dbPointer
 		utils.HandleErr(err)
+		db = dbPointer
 
 		err = db.Update(func(t *bolt.Tx) error {
 			_, err := t.CreateBucketIfNotExists([]byte(dataBucket))
