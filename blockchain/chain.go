@@ -6,16 +6,16 @@ import (
 
 type blockchain struct {
 	NewestHash string `json:"newestHash"`
-	Heigh      int    `json:"height"`
+	Height     int    `json:"height"`
 }
 
 var b *blockchain
 var once sync.Once
 
 func (b *blockchain) AddBlock(data string) {
-	block := createBlock(data, b.NewestHash, b.Heigh+1)
+	block := createBlock(data, b.NewestHash, b.Height+1)
 	b.NewestHash = block.Hash
-	b.Heigh = block.Heigh
+	b.Height = block.Height
 }
 
 func Blockchain() *blockchain {

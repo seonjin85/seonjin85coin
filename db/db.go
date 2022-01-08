@@ -1,6 +1,9 @@
 package db
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/boltdb/bolt"
 	"github.com/seonjin85/seonjin85coin/utils"
 )
@@ -15,7 +18,7 @@ var db *bolt.DB
 
 func DB() *bolt.DB {
 	if db == nil {
-		dbPointer, err := bolt.Open(dbName, 0600, nil)
+		dbPointer, err := bolt.Open(dbName, 0600, &bolt.Options{Timeout: 1 * time.Second})
 		utils.HandleErr(err)
 		db = dbPointer
 
@@ -29,4 +32,23 @@ func DB() *bolt.DB {
 	}
 
 	return db
+}
+
+func SaveBlock(hash string, data []byte) {
+	fmt.Printf("Saving Block %s\nData: %b\n", hash, data)
+	err := DB().Update(func(t *bolt.Tx) error {
+		bucket := t.Bucket([]byte(blocksBucket))
+		err := bucket.Put([]byte(hash), data)
+		return err
+	})
+	utils.HandleErr(err)
+}
+
+func SaveBlockchain(data []byte) {
+	err := DB().Update(func(t *bolt.Tx) error {
+		bucket := t.Bucket([]byte(dataBucket))
+		err := bucket.Put([]byte("checkpoint"), data)
+		return err
+	})
+	utils.HandleErr(err)
 }
