@@ -18,3 +18,4 @@ func ToBytes(i interface{}) []byte {
 	HandleErr(encoder.Encode(i))
 	return aBuffer.Bytes()
 }
+

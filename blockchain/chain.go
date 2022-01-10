@@ -1,6 +1,9 @@
 package blockchain
 
 import (
+	"bytes"
+	"encoding/gob"
+	"fmt"
 	"sync"
 
 	"github.com/seonjin85/seonjin85coin/db"
@@ -14,6 +17,12 @@ type blockchain struct {
 
 var b *blockchain
 var once sync.Once
+
+func (b *blockchain) restore(data []byte) {
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+	err := decoder.Decode(b)
+	utils.HandleErr(err)
+}
 
 func (b *blockchain) persist() {
 	db.SaveBlockchain(utils.ToBytes(b))
@@ -30,8 +39,16 @@ func Blockchain() *blockchain {
 	if b == nil {
 		once.Do(func() {
 			b = &blockchain{"", 0}
-			b.AddBlock("Genesis")
+			fmt.Printf("newesthash: %s\nHeight:%d\n", b.NewestHash, b.Height)
+			checkpoint := db.Checkpoint()
+			if checkpoint == nil {
+				b.AddBlock("Genesis")
+			} else {
+				fmt.Printf("Resotring..")
+				b.restore(checkpoint)
+			}
 		})
 	}
+	fmt.Printf("newesthash: %s\nHeight:%d\n", b.NewestHash, b.Height)
 	return b
 }
