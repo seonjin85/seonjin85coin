@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/seonjin85/seonjin85coin/blockchain"
+	"github.com/seonjin85/seonjin85coin/utils"
 )
 
 var port string
@@ -36,20 +37,6 @@ type addBlockBody struct {
 
 type errorResponse struct {
 	ErrorMessage string `json:"errorMessage`
-}
-
-func blocks(rw http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		return
-		// json.NewEncoder(rw).Encode(blockchain.GetBlockchain().AllBlocks())
-	case "POST":
-		return
-		// var addBlockBody addBlockBody
-		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
-		// blockchain.GetBlockchain().AddBlock(addBlockBody.Message)
-		// rw.WriteHeader(http.StatusCreated)
-	}
 }
 
 func documemtation(rw http.ResponseWriter, r *http.Request) {
@@ -88,6 +75,18 @@ func block(rw http.ResponseWriter, r *http.Request) {
 		encoder.Encode(errorResponse{fmt.Sprint(err)})
 	} else {
 		encoder.Encode(block)
+	}
+}
+
+func blocks(rw http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		json.NewEncoder(rw).Encode(blockchain.Blockchain().Blocks())
+	case "POST":
+		var addBlockBody addBlockBody
+		utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
+		blockchain.Blockchain().AddBlock(addBlockBody.Message)
+		rw.WriteHeader(http.StatusCreated)
 	}
 }
 

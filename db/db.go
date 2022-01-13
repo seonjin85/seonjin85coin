@@ -21,7 +21,6 @@ func DB() *bolt.DB {
 		dbPointer, err := bolt.Open(dbName, 0600, &bolt.Options{Timeout: 1 * time.Second})
 		utils.HandleErr(err)
 		db = dbPointer
-
 		err = db.Update(func(t *bolt.Tx) error {
 			_, err := t.CreateBucketIfNotExists([]byte(dataBucket))
 			utils.HandleErr(err)
@@ -34,6 +33,10 @@ func DB() *bolt.DB {
 	return db
 }
 
+func Close() {
+	DB().Close()
+}
+
 func SaveBlock(hash string, data []byte) {
 	err := DB().Update(func(t *bolt.Tx) error {
 		bucket := t.Bucket([]byte(blocksBucket))
@@ -43,7 +46,17 @@ func SaveBlock(hash string, data []byte) {
 	utils.HandleErr(err)
 }
 
-func SaveBlockchain(data []byte) {
+func Block(hash string) []byte {
+	var data []byte
+	DB().View(func(t *bolt.Tx) error {
+		bucket := t.Bucket([]byte(blocksBucket))
+		data = bucket.Get([]byte(hash))
+		return nil
+	})
+	return data
+}
+
+func SaveCheckpoint(data []byte) {
 	err := DB().Update(func(t *bolt.Tx) error {
 		bucket := t.Bucket([]byte(dataBucket))
 		err := bucket.Put([]byte(checkpoint), data)
@@ -60,15 +73,5 @@ func Checkpoint() []byte {
 		return nil
 	})
 
-	return data
-}
-
-func Block(hash string) []byte {
-	var data []byte
-	DB().View(func(t *bolt.Tx) error {
-		bucket := t.Bucket([]byte(blocksBucket))
-		data = bucket.Get([]byte(hash))
-		return nil
-	})
 	return data
 }

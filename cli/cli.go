@@ -14,6 +14,7 @@ func usage() {
 	fmt.Printf("Please use the following flags:\n\n")
 	fmt.Printf("-port=4000 :    Start the HTML Explorer\n")
 	fmt.Printf("-mode=rest :    Choose between 'html' and 'rest'\n")
+	// runtime.Goexit() // use with goroutines
 	os.Exit(0)
 }
 func Start() {
