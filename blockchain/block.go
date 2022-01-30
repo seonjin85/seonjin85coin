@@ -10,8 +10,6 @@ import (
 	"github.com/seonjin85/seonjin85coin/utils"
 )
 
-const difficulty int = 2
-
 type Block struct {
 	Data       string `json:"data"`
 	Hash       string `json:"hash"`
@@ -56,6 +54,7 @@ func (b *Block) mine() {
 		}
 	}
 }
+
 func createBlock(data string, prevHash string, height int) *Block {
 	block := &Block{
 		Data:       data,
