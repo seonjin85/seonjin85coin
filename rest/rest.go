@@ -36,7 +36,7 @@ type addBlockBody struct {
 }
 
 type errorResponse struct {
-	ErrorMessage string `json:"errorMessage`
+	ErrorMessage string `json:"errorMessage"`
 }
 
 func documemtation(rw http.ResponseWriter, r *http.Request) {
