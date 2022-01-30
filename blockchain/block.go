@@ -54,6 +54,7 @@ func (b *Block) mine() {
 		}
 	}
 }
+
 func createBlock(data string, prevHash string, height int) *Block {
 	block := &Block{
 		Data:       data,
