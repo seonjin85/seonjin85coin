@@ -130,7 +130,7 @@ func balance(rw http.ResponseWriter, r *http.Request) {
 }
 
 func mempool(rw http.ResponseWriter, r *http.Request) {
-	utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.Mempool.TXs))
+	utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.Mempool.Txs))
 }
 
 func transactions(rw http.ResponseWriter, r *http.Request) {
