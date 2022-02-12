@@ -24,10 +24,10 @@ POST http://localhost:4000/transactions
 
 {
     "To" : "lynn",
-    "Amount" : 70
+    "Amount" : 65
 }
 
 ###
 http://localhost:4000/mempool
 ###
-http://localhost:4000/balance/tmpAddress
+http://localhost:4000/balance/tmpAddress?total=true
