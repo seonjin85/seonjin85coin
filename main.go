@@ -1,11 +1,9 @@
 package main
 
 import (
-	"github.com/seonjin85/seonjin85coin/cli"
-	"github.com/seonjin85/seonjin85coin/db"
+	"github.com/seonjin85/seonjin85coin/wallet"
 )
 
 func main() {
-	defer db.Close()
-	cli.Start()
+	wallet.Start()
 }
