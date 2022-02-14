@@ -1,12 +1,10 @@
 package wallet
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
-	"crypto/rand"
 	"crypto/x509"
 	"encoding/hex"
 	"fmt"
+	"math/big"
 
 	"github.com/seonjin85/seonjin85coin/utils"
 )
@@ -30,20 +28,19 @@ const (
 )
 
 func Start() {
-	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	privBytes, err := hex.DecodeString(privateKey)
 	utils.HandleErr(err)
 
-	keyAsBytes, err := x509.MarshalECPrivateKey(privateKey)
-	utils.HandleErr(err)
-	fmt.Printf("%x\n", keyAsBytes)
-
-	hashAsBytes, err := hex.DecodeString(hashedMessage)
+	privateKey, err = x509.ParseECPrivateKey(privBytes)
 	utils.HandleErr(err)
 
-	r, s, err := ecdsa.Sign(rand.Reader, privateKey, hashAsBytes)
-	utils.HandleErr(err)
+	sigBytes, err := hex.DecodeString(signature)
+	rBytes := sigBytes[:len(sigBytes)/2]
+	sBytes := sigBytes[len(sigBytes)/2:]
 
-	signature := append(r.Bytes(), s.Bytes()...)
-	fmt.Printf("%x\n", signature)
+	var bigR, bigS = big.Int{}, big.Int{}
+	bigR.SetBytes(rBytes)
+	bigS.SetBytes(sBytes)
 
+	fmt.Println(bigR, bigS)
 }
