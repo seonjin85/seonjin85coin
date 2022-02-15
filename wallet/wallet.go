@@ -28,6 +28,7 @@ const (
 
 type wallet struct {
 	privateKey *ecdsa.PrivateKey
+	address    string
 }
 
 var w *wallet
@@ -50,16 +51,29 @@ func persistKey(key *ecdsa.PrivateKey) {
 	utils.HandleErr(err)
 }
 
+func restoreKey() *ecdsa.PrivateKey {
+	keyAsBytes, err := os.ReadFile(fileName)
+	utils.HandleErr(err)
+	key, err := x509.ParseECPrivateKey(keyAsBytes)
+	utils.HandleErr(err)
+	return key
+}
+
+func aFromK(key *ecdsa.PrivateKey) string {
+
+}
+
 func Wallet() *wallet {
 	if w == nil {
 		w = &wallet{}
 		if hasWalletFile() {
-
+			w.privateKey = restoreKey()
 		} else {
 			key := createPrivKey()
 			persistKey(key)
 			w.privateKey = key
 		}
+		w.address = aFromK(w.privateKey)
 	}
 	return w
 }
