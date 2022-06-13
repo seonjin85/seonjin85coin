@@ -70,6 +70,23 @@ func recalculateDifficulty(b *blockchain) int {
 	return b.CurrentDifficulty
 }
 
+func Txs(b *blockchain) []*Tx {
+	var txs []*Tx
+	for _, block := range Blocks(b) {
+		txs = append(txs, block.Transactions...)
+	}
+	return txs
+}
+
+func FindTx(b *blockchain, targetID string) *Tx {
+	for _, tx := range Txs(b) {
+		if tx.ID == targetID {
+			return tx
+		}
+	}
+	return nil
+}
+
 func getDifficulty(b *blockchain) int {
 	if b.Height == 0 {
 		return defaultDifficulty

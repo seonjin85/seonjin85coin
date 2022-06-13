@@ -71,7 +71,7 @@ func aFromK(key *ecdsa.PrivateKey) string {
 	return encodeBigInts(key.X.Bytes(), key.Y.Bytes())
 }
 
-func sign(payload string, w *wallet) string {
+func Sign(payload string, w *wallet) string {
 	//sign from privateKey payload
 	//return r, s bytes
 	payloadAsB, err := hex.DecodeString(payload)
@@ -79,7 +79,7 @@ func sign(payload string, w *wallet) string {
 
 	r, s, err := ecdsa.Sign(rand.Reader, w.privateKey, payloadAsB)
 	utils.HandleErr(err)
-	
+
 	return encodeBigInts(r.Bytes(), s.Bytes())
 }
 
