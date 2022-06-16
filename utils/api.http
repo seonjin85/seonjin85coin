@@ -6,9 +6,11 @@ http://localhost:4000/status
 ###
 http://localhost:4000/blocks
 
+###
+http://localhost:4000/wallet
 
 ###
-http://localhost:4000/balance/tmpAddress
+http://localhost:4000/balance/d263d81ae5f84a41b4754e06664c2da53f0c84617515f19b8ada78cbe132265554d96e8ee8cafc24d715390c743ce369feee7cb94b4d98b4ca788289b12f9124
 
 ###
 http://localhost:4000/balance/tmpAddress?total=true
