@@ -5,9 +5,9 @@ import (
 	"time"
 )
 
-func countToTen(name string) {
+func countToTen(c chan int) {
 	for i := range [10]int{} {
-		fmt.Println(i, name)
+		c <- i
 		time.Sleep(1 * time.Second)
 	}
 }
@@ -15,10 +15,11 @@ func countToTen(name string) {
 func main() {
 	// defer db.Close()
 	// cli.Start()
-
-	go countToTen("first")
-	go countToTen("second")
-	for {
-
+	c := make(chan int)
+	go countToTen(c)
+	for{
+		
+		a := <-c
+		fmt.Printf("received %d\n", a)
 	}
 }
