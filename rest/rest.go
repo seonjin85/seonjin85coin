@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	p2p "github.com/seonjin85/seonjin85coin/P2P"
 	"github.com/seonjin85/seonjin85coin/blockchain"
 	"github.com/seonjin85/seonjin85coin/utils"
 	"github.com/seonjin85/seonjin85coin/wallet"
@@ -57,6 +58,13 @@ func jsonContentTypeMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func loggerMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		fmt.Println(r.URL)
+		next.ServeHTTP(rw, r)
+	})
+}
+
 func documemtation(rw http.ResponseWriter, r *http.Request) {
 	data := []urlDescription{
 		{
@@ -89,6 +97,11 @@ func documemtation(rw http.ResponseWriter, r *http.Request) {
 			URL:         url("/balance/{address}"),
 			Method:      "GET",
 			Description: "Get TxOuts for an Address",
+		},
+		{
+			URL:         url("/ws"),
+			Method:      "GET",
+			Description: "Upgrade to WebSockets",
 		},
 	}
 	json.NewEncoder(rw).Encode(data)
@@ -158,7 +171,7 @@ func myWallet(rw http.ResponseWriter, r *http.Request) {
 func Start(aPort int) {
 	router := mux.NewRouter()
 	port = fmt.Sprintf(":%d", aPort)
-	router.Use(jsonContentTypeMiddleware)
+	router.Use(jsonContentTypeMiddleware, loggerMiddleware)
 	router.HandleFunc("/", documemtation).Methods("GET")
 	router.HandleFunc("/status", status).Methods("GET")
 	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
@@ -167,6 +180,7 @@ func Start(aPort int) {
 	router.HandleFunc("/mempool", mempool).Methods("GET")
 	router.HandleFunc("/wallet", myWallet).Methods("GET")
 	router.HandleFunc("/transactions", transactions).Methods("POST")
+	router.HandleFunc("/ws", p2p.Upgrade).Methods("GET")
 	fmt.Printf("Listening on http:localhost%s\n", port)
 	log.Fatal(http.ListenAndServe(port, router))
 }

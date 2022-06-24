@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"time"
+
+	"github.com/seonjin85/seonjin85coin/cli"
+	"github.com/seonjin85/seonjin85coin/db"
 )
 
 func send(c chan<- int) {
@@ -27,10 +30,10 @@ func receive(c <-chan int) {
 }
 
 func main() {
-	// defer db.Close()
-	// cli.Start()
-	c := make(chan int, 10)
-	go send(c)
-	receive(c)
+	defer db.Close()
+	cli.Start()
+	// c := make(chan int, 10)
+	// go send(c)
+	// receive(c)
 
 }
