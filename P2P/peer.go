@@ -12,7 +12,7 @@ type peer struct {
 	conn *websocket.Conn
 }
 
-func initPeer(conn *websocket.Conn, address string, port string) *peer {
+func initPeer(conn *websocket.Conn, address, port string) *peer {
 	p := &peer{
 		conn,
 	}

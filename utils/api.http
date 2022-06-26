@@ -38,6 +38,9 @@ http://localhost:4000/balance/tmpAddress?total=true
 POST http://localhost:4000/peers
 
 {
-    "adderss" : "127.0.0.1",
-    "port" : "3000 "
+    "address" : "127.0.0.1",
+    "port" : "3000"
 }
+
+###
+http://localhost:4000/peers
