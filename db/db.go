@@ -3,8 +3,8 @@ package db
 import (
 	"time"
 
-	"github.com/boltdb/bolt"
 	"github.com/seonjin85/seonjin85coin/utils"
+	bolt "go.etcd.io/bbolt"
 )
 
 const (
