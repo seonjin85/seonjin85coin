@@ -1,6 +1,8 @@
 package db
 
 import (
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/seonjin85/seonjin85coin/utils"
@@ -16,9 +18,14 @@ const (
 
 var db *bolt.DB
 
+func getDbName() string {
+	port := os.Args[2][6:]
+	return fmt.Sprintf("%s_%s.db", dbName, port)
+}
+
 func DB() *bolt.DB {
 	if db == nil {
-		dbPointer, err := bolt.Open(dbName, 0600, &bolt.Options{Timeout: 1 * time.Second})
+		dbPointer, err := bolt.Open(getDbName(), 0600, &bolt.Options{Timeout: 1 * time.Second})
 		utils.HandleErr(err)
 		db = dbPointer
 		err = db.Update(func(t *bolt.Tx) error {
