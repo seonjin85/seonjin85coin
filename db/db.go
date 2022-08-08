@@ -82,3 +82,12 @@ func Checkpoint() []byte {
 
 	return data
 }
+
+func EmptyBlocks() {
+	DB().Update(func(t *bolt.Tx) error {
+		utils.HandleErr(t.DeleteBucket([]byte(blocksBucket)))
+		_, err := t.CreateBucket([]byte(blocksBucket))
+		utils.HandleErr(err)
+		return nil
+	})
+}
