@@ -1,9 +1,6 @@
 package wallet
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
-	"crypto/rand"
 	"crypto/x509"
 	"encoding/hex"
 	"testing"
@@ -24,16 +21,35 @@ func makeTestWallet() *wallet {
 	return w
 }
 
-func TestVerify(t *testing.T) {
-	privKey, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	b, _ := x509.MarshalECPrivateKey(privKey)
-	t.Logf("%x", b)
-}
-
 func TestSign(t *testing.T) {
 	s := Sign(testPayload, makeTestWallet())
 	_, err := hex.DecodeString(s)
 	if err != nil {
 		t.Errorf("Sign() should return a hex encoded string, got %s", s)
+	}
+}
+
+func TestVerify(t *testing.T) {
+	type test struct {
+		input string
+		ok    bool
+	}
+	tests := []test{
+		{testPayload, true},
+		{"0055cd1f2c78cbc035fbe2292ba6765efc36eb9d7c2c1bdc73d6dc0d98386199", false},
+	}
+	for _, tc := range tests {
+		w := makeTestWallet()
+		ok := Verify(testSign, tc.input, w.Address)
+		if ok != tc.ok {
+			t.Error("verify() could not verify testSignature and Payload")
+		}
+	}
+}
+
+func TestRestoreBigInts(t *testing.T) {
+	_, _, err := restoreBigInts("xx")
+	if err == nil {
+		t.Error("restroeBigInts should return error when payload is not hex.")
 	}
 }
