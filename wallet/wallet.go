@@ -32,7 +32,7 @@ const (
 
 type fileLayer interface {
 	hasWalletFile() bool
-	WriteFile(name string, data []byte, perm fs.FileMode) error
+	writeFile(name string, data []byte, perm fs.FileMode) error
 	readFile(name string) ([]byte, error)
 }
 
@@ -69,7 +69,7 @@ func createPrivKey() *ecdsa.PrivateKey {
 func persistKey(key *ecdsa.PrivateKey) {
 	bytes, err := x509.MarshalECPrivateKey(key)
 	utils.HandleErr(err)
-	err = files.WriteFile(fileName, bytes, 0644)
+	err = files.writeFile(fileName, bytes, 0644)
 	utils.HandleErr(err)
 }
 
