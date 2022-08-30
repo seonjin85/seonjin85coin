@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/seonjin85/seonjin85coin/db"
 	"github.com/seonjin85/seonjin85coin/utils"
 )
 
@@ -24,13 +23,13 @@ func (b *Block) restore(data []byte) {
 }
 
 func persistBlock(b *Block) {
-	db.SaveBlock(b.Hash, utils.ToBytes(b))
+	dbStorage.saveBlock(b.Hash, utils.ToBytes(b))
 }
 
 var ErrNotFound = errors.New("block not found")
 
 func FindBlock(hash string) (*Block, error) {
-	blockBytes := db.Block(hash)
+	blockBytes := dbStorage.findBlock(hash)
 	if blockBytes == nil {
 		return nil, ErrNotFound
 	}
@@ -62,8 +61,8 @@ func createBlock(prevHash string, height int, diff int) *Block {
 		Nonce:      0,
 	}
 
-	block.mine()
 	block.Transactions = Mempool().TxToConfirm()
+	block.mine()
 	persistBlock(block)
 	return block
 }
