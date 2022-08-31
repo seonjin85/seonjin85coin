@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/seonjin85/seonjin85coin/db"
 	"github.com/seonjin85/seonjin85coin/utils"
 )
 
@@ -24,10 +23,11 @@ type blockchain struct {
 }
 
 type storage interface {
-	findBlock(hash string) []byte
-	saveBlock(hash string, data []byte)
-	saveChain(data []byte)
-	loadChain() []byte
+	FindBlock(hash string) []byte
+	SaveBlock(hash string, data []byte)
+	SaveChain(data []byte)
+	LoadChain() []byte
+	DeleteAllBlocks()
 }
 
 var b *blockchain
@@ -67,7 +67,7 @@ func Blocks(b *blockchain) []*Block {
 }
 
 func persistBlockchain(b *blockchain) {
-	dbStorage.saveChain(utils.ToBytes(b))
+	dbStorage.SaveChain(utils.ToBytes(b))
 }
 
 func recalculateDifficulty(b *blockchain) int {
@@ -155,7 +155,7 @@ func Blockchain() *blockchain {
 		b = &blockchain{
 			Height: 0,
 		}
-		checkpoint := dbStorage.loadChain()
+		checkpoint := dbStorage.LoadChain()
 		if checkpoint == nil {
 			b.AddBlock()
 		} else {
@@ -180,7 +180,7 @@ func (b *blockchain) Replace(newBlocks []*Block) {
 	b.Height = len(newBlocks)
 	b.NewestHash = newBlocks[0].Hash
 	persistBlockchain(b)
-	db.EmptyBlocks()
+	dbStorage.DeleteAllBlocks()
 	for _, block := range newBlocks {
 		persistBlock(block)
 	}

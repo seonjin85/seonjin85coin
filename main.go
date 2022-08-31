@@ -28,6 +28,7 @@ import (
 
 func main() {
 	defer db.Close()
+	db.InitDB()
 	cli.Start()
 	// c := make(chan int, 10)
 	// go send(c)
