@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/seonjin85/seonjin85coin/db"
 	"github.com/seonjin85/seonjin85coin/utils"
 )
 
@@ -32,7 +33,7 @@ type storage interface {
 
 var b *blockchain
 var once sync.Once
-var dbStorage storage
+var dbStorage storage = db.DB{}
 
 func (b *blockchain) restore(data []byte) {
 	utils.FromBytes(b, data)
